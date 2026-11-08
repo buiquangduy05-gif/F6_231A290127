@@ -261,11 +261,15 @@ class _HomeShellState extends State<HomeShell> {
         ],
       ),
 
-      body: switch (_tab) {
-        0 => _tabCongViec(),
-        1 => _tabThongKe(),
-        _ => _tabCaiDat(),
-      },
+      // NC1: Dùng IndexedStack để mỗi tab giữ nguyên vị trí cuộn
+      body: IndexedStack(
+        index: _tab,
+        children: [
+          _tabCongViec(),
+          _tabThongKe(),
+          _tabCaiDat(),
+        ],
+      ),
 
       // NavigationBar: thanh điều hướng dưới (Material 3), thay cho BottomNavigationBar
       bottomNavigationBar: NavigationBar(
