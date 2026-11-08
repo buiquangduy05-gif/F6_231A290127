@@ -1,17 +1,15 @@
-# f6_congviec
+# Lab F6 - Dialog, SnackBar, Menu & Khung điều hướng Flutter
 
-A new Flutter project.
+- **Họ và tên:** Bùi Quang Duy
+- **MSSV:** 231A290127
 
-## Getting Started
+## Các bài nâng cao đã thực hiện
 
-This project is a starting point for a Flutter application.
+### 1. NC1: Dùng `IndexedStack` để mỗi tab giữ nguyên vị trí cuộn
+- Thay thế `switch (_tab)` ở thuộc tính `body` của `Scaffold` bằng widget `IndexedStack(index: _tab, children: [_tabCongViec(), _tabThongKe(), _tabCaiDat()])`.
+- Giúp giữ nguyên trạng thái và vị trí cuộn của từng tab khi chuyển đổi qua lại trên `NavigationDrawer` và `NavigationBar`.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 2. NC2: Thêm `Dismissible` vuốt một dòng sang trái để xóa, vẫn có Hoàn tác
+- Bổ sung trường định danh duy nhất `id` cho model `CongViec` và sử dụng `ValueKey(cv.id)` ổn định cho mỗi phần tử.
+- Bọc từng `ListTile` công việc trong widget `Dismissible` (`direction: DismissDirection.endToStart`) với nền đỏ và biểu tượng thùng rác.
+- Khi vuốt sang trái (`onDismissed`), gọi hàm `_xoa(cv)` để xóa công việc và hiển thị `SnackBar` kèm nút **HOÀN TÁC** khôi phục lại đúng vị trí cũ.
