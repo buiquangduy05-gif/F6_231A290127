@@ -22,13 +22,17 @@ class MyApp extends StatelessWidget {
 // MODEL
 // ===================================================================
 class CongViec {
+  final String id;
   final String tieuDe;
   final bool xong;
 
-  const CongViec(this.tieuDe, {this.xong = false});
+  const CongViec(this.tieuDe, {required this.id, this.xong = false});
 
-  CongViec copyWith({String? tieuDe, bool? xong}) =>
-      CongViec(tieuDe ?? this.tieuDe, xong: xong ?? this.xong);
+  CongViec copyWith({String? id, String? tieuDe, bool? xong}) => CongViec(
+        tieuDe ?? this.tieuDe,
+        id: id ?? this.id,
+        xong: xong ?? this.xong,
+      );
 }
 
 // ===================================================================
@@ -53,10 +57,10 @@ class _HomeShellState extends State<HomeShell> {
   }
 
   final List<CongViec> _ds = [
-    const CongViec('Nộp bài Lab A11'),
-    const CongViec('Ôn tập SQLite', xong: true),
-    const CongViec('Họp nhóm đồ án'),
-    const CongViec('Đọc tài liệu Flutter', xong: true),
+    const CongViec('Nộp bài Lab A11', id: 'cv_1'),
+    const CongViec('Ôn tập SQLite', id: 'cv_2', xong: true),
+    const CongViec('Họp nhóm đồ án', id: 'cv_3'),
+    const CongViec('Đọc tài liệu Flutter', id: 'cv_4', xong: true),
   ];
 
   List<CongViec> get _hienThi =>
@@ -158,7 +162,10 @@ class _HomeShellState extends State<HomeShell> {
     );
 
     if (tieuDe == null || !mounted) return;
-    setState(() => _ds.insert(0, CongViec(tieuDe)));
+    setState(() => _ds.insert(
+          0,
+          CongViec(tieuDe, id: DateTime.now().microsecondsSinceEpoch.toString()),
+        ));
   }
 
   /// BottomSheet — bảng trượt lên từ cạnh dưới, hợp cho danh sách hành động.
@@ -300,24 +307,35 @@ class _HomeShellState extends State<HomeShell> {
       itemCount: ds.length,
       itemBuilder: (context, i) {
         final cv = ds[i];
-        return ListTile(
-          leading: Checkbox(
-            value: cv.xong,
-            onChanged: (_) => _doiTrangThai(cv),
+        return Dismissible(
+          key: ValueKey(cv.id),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            color: Colors.red,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: const Icon(Icons.delete, color: Colors.white),
           ),
-          title: Text(
-            cv.tieuDe,
-            style: TextStyle(
-              decoration: cv.xong ? TextDecoration.lineThrough : null,
-              color: cv.xong ? Colors.grey : null,
+          onDismissed: (_) => _xoa(cv),
+          child: ListTile(
+            leading: Checkbox(
+              value: cv.xong,
+              onChanged: (_) => _doiTrangThai(cv),
             ),
+            title: Text(
+              cv.tieuDe,
+              style: TextStyle(
+                decoration: cv.xong ? TextDecoration.lineThrough : null,
+                color: cv.xong ? Colors.grey : null,
+              ),
+            ),
+            trailing: const Icon(Icons.more_vert),
+            onTap: () => _moBangHanhDong(cv),
+            onLongPress: () async {
+              final dongY = await _xacNhanXoa(cv);
+              if (dongY && mounted) _xoa(cv);
+            },
           ),
-          trailing: const Icon(Icons.more_vert),
-          onTap: () => _moBangHanhDong(cv),
-          onLongPress: () async {
-            final dongY = await _xacNhanXoa(cv);
-            if (dongY && mounted) _xoa(cv);
-          },
         );
       },
     );
